@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using MyWebFormApp.BLL;
 using MyWebFormApp.BLL.DTOs;
 using MyWebFormApp.BLL.Interfaces;
+using MyWebFormApp.BO;
 using System.Text.Json;
 
 namespace SampleMVC.Controllers
@@ -8,14 +11,25 @@ namespace SampleMVC.Controllers
     public class UsersController : Controller
     {
         private readonly IUserBLL _userBLL;
-        public UsersController(IUserBLL userBLL)
+        private readonly IRoleBLL _roleBLL;
+       public UsersController(IUserBLL userBLL, IRoleBLL roleBLL)
         {
             _userBLL = userBLL;
+            _roleBLL = roleBLL;
         }
 
         public IActionResult Index()
         {
-            return View();
+            var users = _userBLL.GetAll();
+            var listUsers = new SelectList(users, "Username", "Username");
+            ViewBag.Users = listUsers;
+
+            var roles = _roleBLL.GetAllRoles();
+            var listRoles = new SelectList(roles, "RoleID", "RoleName");
+            ViewBag.Roles = listRoles;
+
+            var usersWithRoles = _userBLL.GetAllWithRoles();
+            return View(usersWithRoles);
         }
 
         public IActionResult Login()
@@ -85,6 +99,38 @@ namespace SampleMVC.Controllers
             }
 
             return View();
+        }
+
+  //      public IActionResult Create()
+  //      {
+		//	var userDto = JsonSerializer.Deserialize<UserDTO>(HttpContext.Session.GetString("user"));
+		//	return View();
+		//}
+
+        public IActionResult Edit()
+        {
+            return View();
+        }
+
+        public IActionResult Profile()
+        {
+            //var userWithRoles = _userBLL.GetUserWithRoles("ekurniawan");
+            var usersWithRoles = _userBLL.GetAllWithRoles();
+            return new JsonResult(usersWithRoles);
+        }
+
+        [HttpPost] 
+        public IActionResult AddUserToRole(string Username, int RoleID)
+        {
+            try
+            {
+                _roleBLL.AddUserToRole(Username, RoleID);
+            }
+            catch (Exception ex)
+            {
+                return new JsonResult("Error: " + ex.Message);
+            }
+            return RedirectToAction("Index");
         }
     }
 }

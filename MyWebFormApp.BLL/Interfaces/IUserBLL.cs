@@ -14,5 +14,5 @@ namespace MyWebFormApp.BLL.Interfaces
         UserDTO LoginMVC(LoginDTO loginDTO);
 
         UserDTO GetUserWithRoles(string username);
-    }
+        IEnumerable<UserDTO> GetAllWithRoles();    }
 }

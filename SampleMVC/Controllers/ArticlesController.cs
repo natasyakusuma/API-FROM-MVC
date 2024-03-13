@@ -20,7 +20,13 @@ namespace SampleMVC.Controllers
 
         public IActionResult Index(int CategoryID)
         {
-            if (TempData["Message"] != null)
+			if (HttpContext.Session.GetString("user") == null)
+			{
+				TempData["message"] = @"<div class='alert alert-danger'><strong>Error!</strong>Anda harus login terlebih dahulu !</div>";
+				return RedirectToAction("Login", "Users");
+			}
+
+			if (TempData["Message"] != null)
             {
                 ViewBag.Message = TempData["Message"]?.ToString();
             }
