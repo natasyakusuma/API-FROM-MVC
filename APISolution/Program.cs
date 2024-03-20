@@ -1,5 +1,14 @@
-using MyWebFormApp.BLL.Interfaces;
-using MyWebFormApp.BLL;
+
+
+using APISolution.BLL;
+using APISolution.BLL.DTOs.Validator;
+using APISolution.BLL.Interfaces;
+using APISolution.Data;
+using APISolution.Data.Interfaces.Data;
+using FluentValidation;
+using Microsoft.EntityFrameworkCore;
+
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,9 +19,22 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+//appdbcontext
+builder.Services.AddDbContext<AppDbContext>(options =>
+{
+	options.UseSqlServer(builder.Configuration.GetConnectionString("MyDbConnectionString"));
+});
+
 //Register DI
+builder.Services.AddScoped<ICategoryData, CategoryData>();
 builder.Services.AddScoped<ICategoryBLL, CategoryBLL>();
+builder.Services.AddScoped<IArticleData, ArticleData>();
 builder.Services.AddScoped<IArticleBLL, ArticleBLL>();
+
+
+//automapper
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+builder.Services.AddValidatorsFromAssemblyContaining<CategoryCreateDTOValidator>();
 
 
 var app = builder.Build();
