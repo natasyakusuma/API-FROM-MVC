@@ -33,7 +33,9 @@ namespace APISolution.BLL
 
 		public async Task<ArticleDTO> GetArticleById(int id)
 		{
-			throw new NotImplementedException();
+			var article = await _articleData.GetById(id);
+			var articleDTO = _mapper.Map<ArticleDTO>(article);
+			return articleDTO;
 		}
 
 		public async Task<IEnumerable<ArticleDTO>> GetArticleWithCategory()

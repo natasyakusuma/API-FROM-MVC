@@ -24,6 +24,12 @@ namespace APISolution.Controllers
 			var  articles = await _articleBLL.GetArticleWithCategory();
 			return articles;
 		}
+		[HttpGet("{id}")]
+		public async Task<ArticleDTO> GetArticleById(int id)
+		{
+			var articles = await _articleBLL.GetArticleById(id);
+			return articles;
+		}
 
 
 		//[HttpGet]

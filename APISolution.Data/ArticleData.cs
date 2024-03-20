@@ -39,9 +39,10 @@ namespace APISolution.Data
 			return articles;
 		}
 
-		public Task<Article> GetById(int id)
+		public async Task<Article> GetById(int id)
 		{
-			throw new NotImplementedException();
+			var articles = await _context.Articles.Include(a => a.Category).FirstOrDefaultAsync(a => a.ArticleId == id);
+			return articles;
 		}
 
 		public Task<int> GetCountArticles()
