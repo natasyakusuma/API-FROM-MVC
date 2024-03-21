@@ -11,68 +11,94 @@ using AutoMapper;
 
 namespace APISolution.BLL
 {
-	public class ArticleBLL : IArticleBLL
-	{
+    public class ArticleBLL : IArticleBLL
+    {
 
-		private readonly IArticleData _articleData;
-		private readonly IMapper _mapper;
-		public ArticleBLL(IArticleData articleData, IMapper mapper)
-		{
-			_articleData = articleData;
-			_mapper = mapper;
-		}
+        private readonly IArticleData _articleData;
+        private readonly IMapper _mapper;
+        public ArticleBLL(IArticleData articleData, IMapper mapper)
+        {
+            _articleData = articleData;
+            _mapper = mapper;
+        }
 
-		public Task Delete(int id)
-		{
-			throw new NotImplementedException();
-		}
+        public async Task<bool> Delete(int id)
+        {
+            try
+            {
+                await _articleData.Delete(id);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
 
-		public Task<IEnumerable<ArticleDTO>> GetArticleByCategory(int categoryId)
-		{
-			throw new NotImplementedException();
-		}
+        public async Task<IEnumerable<ArticleDTO>> GetArticleByCategory(int categoryId)
+        {
+            var articles = await _articleData.GetArticleByCategory(categoryId);
+            var articleDtos = _mapper.Map<IEnumerable<ArticleDTO>>(articles);
+            return articleDtos;
+        }
 
-		public async Task<ArticleDTO> GetArticleById(int id)
-		{
-			var article = await _articleData.GetById(id);
-			var articleDTO = _mapper.Map<ArticleDTO>(article);
-			return articleDTO;
-		}
+        public async Task<ArticleDTO> GetArticleById(int id)
+        {
+            var article = await _articleData.GetById(id);
+            var articleDto = _mapper.Map<ArticleDTO>(article);
+            return articleDto;
+        }
 
-		public async Task<IEnumerable<ArticleDTO>> GetArticleWithCategory()
-		{
-			var articles = await _articleData.GetArticleWithCategory();
-			var articlesDTO = _mapper.Map<IEnumerable<ArticleDTO>>(articles);
-			return articlesDTO;
-		}
+        public async Task<IEnumerable<ArticleDTO>> GetArticleWithCategory()
+        {
+            var articles = await _articleData.GetArticleWithCategory();
+            var articleDtos = _mapper.Map<IEnumerable<ArticleDTO>>(articles);
+            return articleDtos;
+        }
 
-		public Task<int> GetCountArticles()
-		{
-			throw new NotImplementedException();
-		}
+        public async Task<int> GetCountArticles()
+        {
+            return await _articleData.GetCountArticles();
+        }
 
-		public Task<IEnumerable<ArticleDTO>> GetWithPaging(int categoryId, int pageNumber, int pageSize)
-		{
-			throw new NotImplementedException();
-		}
+        public Task<IEnumerable<ArticleDTO>> GetWithPaging(int categoryId, int pageNumber, int pageSize)
+        {
+            throw new NotImplementedException();
+        }
 
-		public async Task Insert(ArticleCreateDTO article)
-		{
-			var articleEntity= _mapper.Map<Article>(article);
-			await _articleData.InsertArticleWithCategory(articleEntity);
+        public async Task<ArticleDTO> Insert(ArticleCreateDTO article)
+        {
+            try
+            {
+                var articleInsert = _mapper.Map<Article>(article);
+                var articleInserted = await _articleData.Insert(articleInsert);
+                var articleDto = _mapper.Map<ArticleDTO>(articleInserted);
+                return articleDto;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
 
+        public Task<int> InsertWithIdentity(ArticleCreateDTO article)
+        {
+            throw new NotImplementedException();
+        }
 
-		}
-
-
-		public async Task<int> InsertWithIdentity(ArticleCreateDTO article)
-		{
-			throw new NotImplementedException();
-		}
-
-		public Task Update(ArticleUpdateDTO article)
-		{
-			throw new NotImplementedException();
-		}
-	}
+        public async Task<ArticleDTO> Update(int id, ArticleUpdateDTO article)
+        {
+            try
+            {
+                var updateArticle = _mapper.Map<Article>(article);
+                var articleUpdated = await _articleData.Update(id, updateArticle);
+                var articleDto = _mapper.Map<ArticleDTO>(articleUpdated);
+                return articleDto;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+    }
 }

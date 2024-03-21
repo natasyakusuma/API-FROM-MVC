@@ -93,6 +93,17 @@ public class CategoriesController : Controller
 
 	}
 
+	public IActionResult Delete(int id)
+	{
+		var model = _categoryService.GetById(id);
+		if (model == null)
+		{
+			TempData["message"] = @"<div class='alert alert-danger'><strong>Error!</strong>Category Not Found !</div>";
+			return RedirectToAction("Index");
+        }
+		return View(model);
+	}
+
 	//{
 	//    var model = _categoryBLL.GetById(id);
 	//    return View(model);
