@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using APISolution.BLL.DTOs;
 using APISolution.BLL.Interfaces;
 using APISolution.Data.Interfaces.Data;
+using APISolution.Domain;
 using AutoMapper;
 
 namespace APISolution.BLL
@@ -55,12 +56,16 @@ namespace APISolution.BLL
 			throw new NotImplementedException();
 		}
 
-		public Task Insert(ArticleCreateDTO article)
+		public async Task Insert(ArticleCreateDTO article)
 		{
-			throw new NotImplementedException();
+			var articleEntity= _mapper.Map<Article>(article);
+			await _articleData.InsertArticleWithCategory(articleEntity);
+
+
 		}
 
-		public Task<int> InsertWithIdentity(ArticleCreateDTO article)
+
+		public async Task<int> InsertWithIdentity(ArticleCreateDTO article)
 		{
 			throw new NotImplementedException();
 		}

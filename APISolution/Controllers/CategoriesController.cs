@@ -1,5 +1,6 @@
 ﻿using APISolution.BLL.DTOs;
 using APISolution.BLL.Interfaces;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 
 
@@ -13,10 +14,16 @@ namespace APISolution.Controllers
 	{
 		// GET: api/<CategoriesController>
 		private readonly ICategoryBLL _categoryBLL;
-
-		public CategoriesController(ICategoryBLL categoryBLL)
+		private readonly IValidator<CategoryCreateDTO> _validatorCategoryCreateDto;
+		private readonly IValidator<CategoryUpdateDTO> _validatorCategoryUpdateDto;
+		public CategoriesController(ICategoryBLL categoryBLL,
+			IValidator<CategoryCreateDTO> validatorCategoryCreateDto,
+			IValidator<CategoryUpdateDTO> validatorCategoryUpdateDto)
 		{
 			_categoryBLL = categoryBLL;
+			_validatorCategoryCreateDto = validatorCategoryCreateDto;
+			_validatorCategoryUpdateDto = validatorCategoryUpdateDto;
+
 		}
 
 		[HttpGet]
@@ -27,9 +34,14 @@ namespace APISolution.Controllers
 		}
 
 		[HttpGet("{id}")]
-		public async Task<CategoryDTO> GetById(int id)
+		public async Task<IActionResult> GetById(int id)
 		{
-			return await _categoryBLL.GetById(id);
+			var result = await _categoryBLL.GetById(id);
+			if (result == null)
+			{
+				return NotFound();
+			}
+			return Ok(result);
 		}
 
 		[HttpGet("/api/Categories/ByName/{name}")]
@@ -39,23 +51,82 @@ namespace APISolution.Controllers
 		}
 
 		[HttpPost]
-		public async Task<CategoryDTO> Insert(CategoryCreateDTO entity)
+		//PAK ERIK CODE 
+		public async Task<IActionResult> Post(int id, CategoryCreateDTO categoryCreateDTO)
 		{
-			return await _categoryBLL.Insert(entity);
+			var validateResult = await _validatorCategoryCreateDto.ValidateAsync(categoryCreateDTO);
+
+			if (!validateResult.IsValid)
+			{
+				Helpers.Extensions.AddToModelState(validateResult, ModelState);
+				return BadRequest(ModelState);
+			}
+
+			try
+			{
+				var newCategory = await _categoryBLL.Insert(categoryCreateDTO);
+				return CreatedAtAction("Get", new { id = id }, newCategory);
+			}
+			catch (Exception ex)
+			{
+				return BadRequest(ex.Message);
+			}
 		}
 
+		//MY CODE
+		//public async Task<CategoryDTO> Put (CategoryCreateDTO entity)
+		//{
+		//	return await _categoryBLL.Insert(entity);
+		//}
+
 		[HttpPut("/api/categories")]
-		public async Task<CategoryDTO> Update(int id, CategoryUpdateDTO entity)
+		public async Task<IActionResult> Put (int id, CategoryUpdateDTO categoryUpdateDTO)
 		{
-			return await _categoryBLL.Update(id,entity);
+			var validateResult = await _validatorCategoryUpdateDto.ValidateAsync(categoryUpdateDTO);
+
+			if (!validateResult.IsValid)
+			{
+				Helpers.Extensions.AddToModelState(validateResult, ModelState);
+				return BadRequest(ModelState);
+			}
+
+			try
+			{
+				await _categoryBLL.Update(id, categoryUpdateDTO);
+				return Ok("Data berhasil diubah");
+			}
+			catch (Exception ex)
+			{
+				return BadRequest(ex.Message);
+			}
 		}
+
+		//MY CODE 
+		//public async Task<CategoryDTO> Update(int id, CategoryUpdateDTO entity)
+		//{
+		//	return await _categoryBLL.Update(id, entity);
+		//}
 
 		[HttpDelete("{id}")]
 		public async Task<bool> Delete(int id)
 		{
-			return await _categoryBLL.Delete(id);
-
+			try
+			{
+				await _categoryBLL.Delete(id);
+				return true;
+			}
+			catch (Exception ex)
+			{
+				throw new Exception(ex.Message);
+			}
 		}
+
+		//MY CODE 
+		//public async Task<bool> Delete(int id)
+		//{
+		//	return await _categoryBLL.Delete(id);
+
+		//}
 
 
 

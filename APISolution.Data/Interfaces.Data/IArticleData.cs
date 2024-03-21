@@ -13,6 +13,6 @@ namespace APISolution.Data.Interfaces.Data
 		Task <int> GetCountArticles();
 		Task <int> InsertWithIdentity(Article article);
 
-		Task InsertArticleWithCategory(Article article);
+		Task <Task> InsertArticleWithCategory(Article article);
 	}
 }

@@ -11,14 +11,16 @@ namespace APISolution.Data
 		{
 			_context = context;
 		}
-		public async Task Delete(int id)
+		public async Task<bool> Delete(int id)
 		{
 			var categories = await _context.Categories.FindAsync(id);
 			if (categories != null)
 			{
-				_context.Categories.Remove(categories);
-				await _context.SaveChangesAsync();
+				throw new ArgumentException("Data tidak ditemukan");
 			}
+			_context.Categories.Remove(categories);
+			await _context.SaveChangesAsync();
+			return true;
 		}
 
 		public async Task<IEnumerable<Category>> GetAll()
@@ -36,29 +38,55 @@ namespace APISolution.Data
 
 		public async Task<IEnumerable<Category>> GetByName(string name)
 		{
-			var category = await _context.Categories.Where(c => c.CategoryName.Contains(name)).ToListAsync();
+			var category = await _context.Categories
+				.Where(c => c.CategoryName
+				.Contains(name))
+				.ToListAsync();
 			return category;
 		}
 
-		public Task<int> GetCountCategories(string name)
+		public async Task<int> GetCountCategories(string name)
 		{
-			throw new NotImplementedException();
+			var count = await _context.Categories
+				.Where(c => c.CategoryName
+				.Contains(name))
+				.CountAsync();
+			return count;
 		}
 
-		public Task<IEnumerable<Category>> GetWithPaging(int pageNumber, int pageSize, string name)
+		public async Task<IEnumerable<Category>> GetWithPaging(int pageNumber, int pageSize, string name)
 		{
-			throw new NotImplementedException();
+			var categories = await _context.Categories
+				.Where(c => c.CategoryName
+				.Contains(name))
+				.Skip((pageNumber - 1) * pageSize)
+				.Take(pageSize)
+				.ToListAsync();
+			return categories;
+
 		}
 
 		public async Task<Category> Insert(Category entity)
 		{
-			var category = new Category
+			// pak erik code
+			try
 			{
-				CategoryName = entity.CategoryName
-			};
-			await _context.Categories.AddAsync(category);
-			await _context.SaveChangesAsync();
-			return category;
+				_context.Categories.Add(entity);
+				await _context.SaveChangesAsync();
+				return entity;
+			}catch (Exception ex)
+			{
+				throw new Exception(ex.Message);
+			}
+
+			//My Code 
+			//var category = new Category
+			//{
+			//	CategoryName = entity.CategoryName
+			//};
+			//await _context.Categories.AddAsync(category);
+			//await _context.SaveChangesAsync();
+			//return category;
 		}
 
 
