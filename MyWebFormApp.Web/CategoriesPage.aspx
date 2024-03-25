@@ -31,7 +31,7 @@
                             <asp:GridView ID="gvCategories"
                                 CssClass="table table-hover" DataKeyNames="CategoryID" AutoGenerateColumns="False"
                                 OnRowCommand="gvCategories_RowCommand" OnRowDeleting="gvCategories_RowDeleting" 
-                                runat="server">
+                                runat="server" AllowPaging="True" PageSize="5">
                                 <Columns>
                                     <asp:BoundField DataField="CategoryID" HeaderText="ID" />
                                     <asp:BoundField DataField="CategoryName" HeaderText="Name" />

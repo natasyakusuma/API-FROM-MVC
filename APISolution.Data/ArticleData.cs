@@ -143,7 +143,7 @@ namespace APISolution.Data
 
 		}
 
-		public async Task<int> InsertWithIdentity(Article article)
+		public Task<int> InsertWithIdentity(Article article)
 		{
 			throw new NotImplementedException();
 		}

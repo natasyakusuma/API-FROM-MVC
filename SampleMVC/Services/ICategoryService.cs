@@ -6,8 +6,10 @@ namespace SampleMVC.Services
 	{
 		Task<IEnumerable<CategoryDTO>> GetAll();
 		Task<CategoryDTO> GetById(int id);
-		Task <CategoryDTO> Insert(CategoryCreateDTO categoryCreateDTO);
+        Task<int> GetCount();
+        Task<IEnumerable<CategoryDTO>> GetByPage(int page, int pageSize);
+        Task <CategoryDTO> Insert(CategoryCreateDTO categoryCreateDTO);
 		Task<CategoryDTO> Update(int id,CategoryUpdateDTO categoryUpdateDTO);
-		Task<bool> Delete(int id);
+		Task Delete(int id);
 	}
 }

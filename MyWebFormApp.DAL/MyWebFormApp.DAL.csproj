@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.1.28" />
+    <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="8.0.3" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0" />

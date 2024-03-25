@@ -8,177 +8,178 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace APISolution.Controllers
 {
-	[Route("api/[controller]")]
-	[ApiController]
-	public class CategoriesController : ControllerBase
-	{
-		// GET: api/<CategoriesController>
-		private readonly ICategoryBLL _categoryBLL;
-		private readonly IValidator<CategoryCreateDTO> _validatorCategoryCreateDto;
-		private readonly IValidator<CategoryUpdateDTO> _validatorCategoryUpdateDto;
-		public CategoriesController(ICategoryBLL categoryBLL,
-			IValidator<CategoryCreateDTO> validatorCategoryCreateDto,
-			IValidator<CategoryUpdateDTO> validatorCategoryUpdateDto)
-		{
-			_categoryBLL = categoryBLL;
-			_validatorCategoryCreateDto = validatorCategoryCreateDto;
-			_validatorCategoryUpdateDto = validatorCategoryUpdateDto;
+    [Route("api/[controller]")]
+    [ApiController]
+    public class CategoriesController : ControllerBase
+    {
+        // GET: api/<CategoriesController>
+        private readonly ICategoryBLL _categoryBLL;
+        private readonly IValidator<CategoryCreateDTO> _validatorCategoryCreateDto;
+        private readonly IValidator<CategoryUpdateDTO> _validatorCategoryUpdateDto;
+        public CategoriesController(ICategoryBLL categoryBLL,
+            IValidator<CategoryCreateDTO> validatorCategoryCreateDto,
+            IValidator<CategoryUpdateDTO> validatorCategoryUpdateDto)
+        {
+            _categoryBLL = categoryBLL;
+            _validatorCategoryCreateDto = validatorCategoryCreateDto;
+            _validatorCategoryUpdateDto = validatorCategoryUpdateDto;
 
-		}
+        }
 
-		[HttpGet]
-		public async Task<IEnumerable<CategoryDTO>> Get()
-		{
-			var results = await _categoryBLL.GetAll();
-			return results;
-		}
+        [HttpGet]
+        public async Task<IEnumerable<CategoryDTO>> Get()
+        {
+            var results = await _categoryBLL.GetAll();
+            return results;
+        }
 
-		[HttpGet("{id}")]
-		public async Task<IActionResult> GetById(int id)
-		{
-			var result = await _categoryBLL.GetById(id);
-			if (result == null)
-			{
-				return NotFound();
-			}
-			return Ok(result);
-		}
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(int id)
+        {
+            var result = await _categoryBLL.GetById(id);
+            if (result == null)
+            {
+                return NotFound();
+            }
+            return Ok(result);
+        }
 
-		[HttpGet("/api/Categories/ByName/{name}")]
-		public async Task<IEnumerable<CategoryDTO>> GetByName(string name)
-		{
-			return await _categoryBLL.GetByName(name);
-		}
+        [HttpGet("/api/Categories/ByName/{name}")]
+        public async Task<IEnumerable<CategoryDTO>> GetByName(string name)
+        {
+            return await _categoryBLL.GetByName(name);
+        }
 
-		[HttpPost]
-		//PAK ERIK CODE 
-		public async Task<IActionResult> Post(int id, CategoryCreateDTO categoryCreateDTO)
-		{
-			var validateResult = await _validatorCategoryCreateDto.ValidateAsync(categoryCreateDTO);
+        [HttpPost]
+        //PAK ERIK CODE 
+        public async Task<IActionResult> Post(int id, CategoryCreateDTO categoryCreateDTO)
+        {
+            var validateResult = await _validatorCategoryCreateDto.ValidateAsync(categoryCreateDTO);
 
-			if (!validateResult.IsValid)
-			{
-				Helpers.Extensions.AddToModelState(validateResult, ModelState);
-				return BadRequest(ModelState);
-			}
+            if (!validateResult.IsValid)
+            {
+                Helpers.Extensions.AddToModelState(validateResult, ModelState);
+                return BadRequest(ModelState);
+            }
 
-			try
-			{
-				var newCategory = await _categoryBLL.Insert(categoryCreateDTO);
-				return CreatedAtAction("Get", new { id = id }, newCategory);
-			}
-			catch (Exception ex)
-			{
-				return BadRequest(ex.Message);
-			}
-		}
+            try
+            {
+                var newCategory = await _categoryBLL.Insert(categoryCreateDTO);
+                return CreatedAtAction("Get", new { id = id }, newCategory);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 
-		//MY CODE
-		//public async Task<CategoryDTO> Put (CategoryCreateDTO entity)
-		//{
-		//	return await _categoryBLL.Insert(entity);
-		//}
+        //MY CODE
+        //public async Task<CategoryDTO> Put (CategoryCreateDTO entity)
+        //{
+        //	return await _categoryBLL.Insert(entity);
+        //}
 
-		[HttpPut("/api/categories")]
-		public async Task<IActionResult> Put (int id, CategoryUpdateDTO categoryUpdateDTO)
-		{
-			var validateResult = await _validatorCategoryUpdateDto.ValidateAsync(categoryUpdateDTO);
+        [HttpPut("/api/categories")]
+        public async Task<IActionResult> Put(int id, CategoryUpdateDTO categoryUpdateDTO)
+        {
+            var validateResult = await _validatorCategoryUpdateDto.ValidateAsync(categoryUpdateDTO);
 
-			if (!validateResult.IsValid)
-			{
-				Helpers.Extensions.AddToModelState(validateResult, ModelState);
-				return BadRequest(ModelState);
-			}
+            if (!validateResult.IsValid)
+            {
+                Helpers.Extensions.AddToModelState(validateResult, ModelState);
+                return BadRequest(ModelState);
+            }
 
-			try
-			{
-				await _categoryBLL.Update(id, categoryUpdateDTO);
-				return Ok("Data berhasil diubah");
-			}
-			catch (Exception ex)
-			{
-				return BadRequest(ex.Message);
-			}
-		}
+            try
+            {
+                await _categoryBLL.Update(id, categoryUpdateDTO);
+                return Ok("Data berhasil diubah");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 
-		//MY CODE 
-		//public async Task<CategoryDTO> Update(int id, CategoryUpdateDTO entity)
-		//{
-		//	return await _categoryBLL.Update(id, entity);
-		//}
+        //MY CODE 
+        //public async Task<CategoryDTO> Update(int id, CategoryUpdateDTO entity)
+        //{
+        //	return await _categoryBLL.Update(id, entity);
+        //}
 
-		[HttpDelete("{id}")]
-		public async Task<bool> Delete(int id)
-		{
-			try
-			{
-				await _categoryBLL.Delete(id);
-				return true;
-			}
-			catch (Exception ex)
-			{
-				throw new Exception(ex.Message);
-			}
-		}
+        [HttpDelete("{id}")]
+        public async Task<bool> Delete(int id)
+        {
 
-		//MY CODE 
-		//public async Task<bool> Delete(int id)
-		//{
-		//	return await _categoryBLL.Delete(id);
+            var result = await _categoryBLL.Delete(id);
+            if (result)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
 
-		//}
-
-
-
-		//[HttpGet("{id}")]  //karena ini nerima jadi tipe function gini aja gitu
-		//public CategoryDTO GetById(int id)
-		//{
-		//    return _categxoryBLL.GetById(id);
-		//}
-
-
-
-		//[HttpPost]
-		//public IActionResult Post(CategoryCreateDTO category)  //karena ini lebih customizeable jadi iactionresult
-		//{
-		//	try
-		//	{
-		//		_categoryBLL.Insert(category);
-		//		return Ok("Data berhasil ditambahkan");
-		//	}
-		//	catch (Exception ex)
-		//	{
-		//		return BadRequest(ex.Message);
-		//	}
-		//}
-
-		//[HttpPut]
-		//public IActionResult Put(CategoryUpdateDTO category)
-		//{
-		//	try
-		//	{
-		//		_categoryBLL.Update(category);
-		//		return Ok("Data berhasil diubah");
-		//	}
-		//	catch (Exception ex)
-		//	{
-		//		return BadRequest(ex.Message);
-		//	}
-		//}
-
-		////[HttpDelete("{id}")]
-		////public IActionResult Delete(int id)
-		////{
-		////    var result = GetById(id);
-		////    if (result == null)
-		////    {
-		////        return BadRequest("Data tidak ditemukan");
-		////    }
-		////    _categoryBLL.Delete(id);
-		////    return Ok("Data Category ID : {id} berhasil di delete");
-		////}
-
-
-
-	}
+    }
 }
+
+
+
+//MY CODE 
+//public async Task<bool> Delete(int id)
+//{
+//	return await _categoryBLL.Delete(id);
+
+//}
+
+
+
+//[HttpGet("{id}")]  //karena ini nerima jadi tipe function gini aja gitu
+//public CategoryDTO GetById(int id)
+//{
+//    return _categxoryBLL.GetById(id);
+//}
+
+
+
+//[HttpPost]
+//public IActionResult Post(CategoryCreateDTO category)  //karena ini lebih customizeable jadi iactionresult
+//{
+//	try
+//	{
+//		_categoryBLL.Insert(category);
+//		return Ok("Data berhasil ditambahkan");
+//	}
+//	catch (Exception ex)
+//	{
+//		return BadRequest(ex.Message);
+//	}
+//}
+
+//[HttpPut]
+//public IActionResult Put(CategoryUpdateDTO category)
+//{
+//	try
+//	{
+//		_categoryBLL.Update(category);
+//		return Ok("Data berhasil diubah");
+//	}
+//	catch (Exception ex)
+//	{
+//		return BadRequest(ex.Message);
+//	}
+//}
+
+////[HttpDelete("{id}")]
+////public IActionResult Delete(int id)
+////{
+////    var result = GetById(id);
+////    if (result == null)
+////    {
+////        return BadRequest("Data tidak ditemukan");
+////    }
+////    _categoryBLL.Delete(id);
+////    return Ok("Data Category ID : {id} berhasil di delete");
+////}

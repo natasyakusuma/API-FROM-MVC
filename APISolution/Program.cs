@@ -22,7 +22,7 @@ builder.Services.AddSwaggerGen();
 //appdbcontext
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
-	options.UseSqlServer(builder.Configuration.GetConnectionString("MyDbConnectionString"));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("MyDbConnectionString"));
 });
 
 //Register DI
@@ -30,6 +30,10 @@ builder.Services.AddScoped<ICategoryData, CategoryData>();
 builder.Services.AddScoped<ICategoryBLL, CategoryBLL>();
 builder.Services.AddScoped<IArticleData, ArticleData>();
 builder.Services.AddScoped<IArticleBLL, ArticleBLL>();
+builder.Services.AddScoped<IUserBLL, UserBLL>();
+builder.Services.AddScoped<IUserData, UserData>();
+builder.Services.AddScoped<IRoleBLL, RoleBLL>();
+builder.Services.AddScoped<IRoleData, RoleData>();
 
 
 //automapper

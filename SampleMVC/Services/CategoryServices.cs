@@ -25,15 +25,13 @@ namespace SampleMVC.Services
             return _configuration["BaseUrl"] + "/Categories";
         }
 
-        public async Task<bool> Delete(int id)
+        public async Task Delete(int id)
         {
             var httpResponse = await _client.DeleteAsync($"{GetBaseUrl()}/{id}");
             if (!httpResponse.IsSuccessStatusCode)
             {
                 throw new Exception("Cannot Delete Category");
             }
-
-            return true; // Jika permintaan berhasil dihapus, kembalikan true
         }
 
 
@@ -78,6 +76,16 @@ namespace SampleMVC.Services
         }
 
         public Task<CategoryDTO> Update(int id, CategoryUpdateDTO categoryUpdateDTO)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<int> GetCount()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<CategoryDTO>> GetByPage(int page, int pageSize)
         {
             throw new NotImplementedException();
         }

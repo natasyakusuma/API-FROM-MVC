@@ -1,3 +1,4 @@
+﻿@model APISolution.BLL.DTOs.CategoryDTO
 ﻿<div class="row">
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800">Delete Category</h1>
@@ -11,7 +12,7 @@
             </div>
             <div class="card-body">
                 <p>Are you sure ?</p>
-                <form asp-action="Delete">
+                <form asp-action="Delete" method="Post">
                     <div class="form-group">
                         <label for="CategoryID">Category ID :</label>
                         <input type="text" class="form-control" name="CategoryID" readonly value="@Model.CategoryID" />
